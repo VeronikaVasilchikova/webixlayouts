@@ -1,0 +1,18 @@
+.template_footer {
+  text-align: center;
+}
+
+.green_button .webix_button {
+  color: green;
+  background-color: #EDEFF0;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.green_button .webix_button .webix_icon_btn {
+  color: green;
+}
+
+.gray_menu .webix_view {
+  background-color: #EDEFF0;
+}
