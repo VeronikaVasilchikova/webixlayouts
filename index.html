@@ -15,7 +15,7 @@
 
           webix.ui({
             view:"popup",
-            id:"popup_btn_toolbar",
+            id:"popupBtnToolbar",
             width:200,
             body:{
               view:"list",
@@ -41,13 +41,13 @@
               {},
               {
                 view:"button",
-                id:"btn_toolbar",
+                id:"btnToolbar",
                 type:"icon",
                 icon:"wxi-user",
                 label:"Profile",
                 width: 100,
                 css:"webix_transparent",
-                popup:"popup_btn_toolbar"
+                popup:"popupBtnToolbar"
               }
             ]
           };
@@ -75,6 +75,7 @@
 
           let datatable = {
             view:"datatable",
+            id:"filmList",
             scroll:"y",
             columns: [
               {
@@ -107,7 +108,23 @@
             id:"editFilms",
             width:280,
             paddingX:25,
-            elements:form_edit_films_data
+            elements:form_edit_films_data,
+            rules:{
+              title: webix.rules.isNotEmpty,
+              year:function(value) {
+                const today = new Date();
+                const currentYear = today.getFullYear();
+                //console.log(this.config.width);
+                //this.config.width = 400;
+                return value > 1970 && value < currentYear;
+              },
+              rating:function(value) {
+                return !value || value != 0;
+              },
+              votes:function(value) {
+                return value < 100000;
+              }
+            }
           };
 
           webix.ui({
@@ -116,6 +133,38 @@
               {cols:[menu, {view:"resizer"}, datatable, form]},
               {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:30}
             ],
+          });
+
+          $$("btnAddNew").attachEvent("onItemClick", function() {
+            if ($$("editFilms").validate()) {
+              webix.message("Your data has been successfully entered!");
+              const formData = $$("editFilms").getValues();
+              $$("filmList").add(formData);
+            } else {
+              $$('editFilms').config.width = 400;
+              $$('editFilms').resize();
+            }
+          });
+
+          $$("btnClear").attachEvent("onItemClick", function() {
+            webix.confirm({
+              title: "Clear this form",
+              text: "Are you sure you want to clear this form?",
+              callback: function(result) {
+                if (result) {
+                  $$("editFilms").clear();
+                  $$("editFilms").clearValidation();
+                }
+              }
+            })
+            .then(
+              function(){
+                  webix.message("Form cleaning is confirmed");
+              },
+              function(){
+                  webix.message("Form cleaning is rejected");
+              }
+            );
           });
 
         });
