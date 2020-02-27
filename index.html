@@ -13,6 +13,8 @@
 
         webix.ready(function(){
 
+          //Create a popup for button in toolbar
+
           webix.ui({
             view:"popup",
             id:"popupBtnToolbar",
@@ -114,8 +116,6 @@
               year:function(value) {
                 const today = new Date();
                 const currentYear = today.getFullYear();
-                //console.log(this.config.width);
-                //this.config.width = 400;
                 return value > 1970 && value < currentYear;
               },
               rating:function(value) {
@@ -135,14 +135,17 @@
             ],
           });
 
+          // Add method "attachEvent" to buttons in form
+
           $$("btnAddNew").attachEvent("onItemClick", function() {
             if ($$("editFilms").validate()) {
-              webix.message("Your data has been successfully entered!");
               const formData = $$("editFilms").getValues();
               $$("filmList").add(formData);
+              webix.message("Validation is successfull! Your data has been entered!");
             } else {
               $$('editFilms').config.width = 400;
               $$('editFilms').resize();
+              webix.message("Validation is failed! You should fix wrong data");
             }
           });
 
@@ -154,6 +157,10 @@
                 if (result) {
                   $$("editFilms").clear();
                   $$("editFilms").clearValidation();
+                  if($$('editFilms').config.width === 400) {
+                    $$('editFilms').config.width = 280;
+                    $$('editFilms').resize();
+                  }
                 }
               }
             })
