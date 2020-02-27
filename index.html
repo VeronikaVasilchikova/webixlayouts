@@ -12,6 +12,21 @@
 
         webix.ready(function(){
 
+          webix.ui({
+            view:"popup",
+            id:"popup_btn_toolbar",
+            width:200,
+            body:{
+              view:"list",
+              data:[
+                "Settings",
+                "Log Out"
+              ],
+              autoheight:true,
+              select:true
+            }
+          });
+
           let toolbar = {
             view:"toolbar",
             css:"webix_dark",
@@ -25,11 +40,13 @@
               {},
               {
                 view:"button",
+                id:"btn_toolbar",
                 type:"icon",
                 icon:"wxi-user",
                 label:"Profile",
                 width: 100,
-                css:"webix_transparent"
+                css:"webix_transparent",
+                popup:"popup_btn_toolbar"
               }
             ]
           };
@@ -56,7 +73,7 @@
           };
 
           let datatable = {
-            view:"datatable", 
+            view:"datatable",
             scroll:"y",
             columns: [
               {
