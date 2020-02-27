@@ -1,0 +1,14 @@
+.template_footer {
+  text-align: center;
+}
+
+.gray_menu .webix_view {
+  background-color: #EDEFF0;
+}
+
+.green_template {
+  color: green;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+}

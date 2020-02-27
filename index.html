@@ -3,10 +3,138 @@
     <head>
       <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" type="text/css">
       <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
+      <script src="menudata.js" type="text/javascript"></script>
+      <script src="testdata.js" type="text/javascript"></script>
+      <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
       <script type="text/javascript" charset="utf-8">
 
+        webix.ready(function(){
+
+          let toolbar = {
+            view:"toolbar",
+            css:"webix_dark",
+            height:40,
+            paddingX:10,
+            elements:[
+              {
+                view:"label",
+                label:"My App"
+              },
+              {},
+              {
+                view:"button",
+                type:"icon",
+                icon:"wxi-user",
+                label:"Profile",
+                width: 100,
+                css:"webix_transparent"
+              }
+            ]
+          };
+
+          let menu = {
+            width:180,
+            minWidth:150,
+            css:"gray_menu",
+            rows:[
+              {
+                view:"list",
+                template:"#value#",
+                data:menu_data,
+                scroll:false,
+              },
+              {},
+              {
+                template:"<span class='webix_icon wxi-check'></span> Connected",
+                height:30,
+                type:"clean",
+                css:"green_template"
+              }
+            ]
+          };
+
+          let datatable = {
+            view:"datatable", 
+            scroll:"y",
+            columns: [
+              {
+                id:"title",
+                header:"Title",
+                fillspace:true
+              },
+              {
+                id:"year",
+                header:"Year"
+              },
+              {
+                id:"votes",
+                header:"Votes"
+              },
+              {
+                id:"rating",
+                header:"Rating"
+              },
+              {
+                id:"rank",
+                header:"Rank"
+              }
+            ],
+            data:small_film_set
+          };
+
+          let form = {
+            view:"form",
+            width:280,
+            paddingX:25,
+            elements:[
+              {
+                template:"Edit films",
+                type:"section"
+              },
+              {
+                view:"text",
+                label:"Title",
+                name:"title"
+              },
+              {
+                view:"text",
+                label:"Year",
+                name:"year"
+              },
+              {
+                view:"text",
+                label:"Rating",
+                name:"rating"
+              },
+              {
+                view:"text",
+                label:"Votes",
+                name:"votes"
+              },
+              {
+                margin:10,
+                cols:[
+                  {view:"button", value:"Add new", css:"webix_primary", width: 110},
+                  {view:"button", value:"Clear", width: 110},
+                ]
+              },
+              {},
+            ]
+          };
+
+          webix.ui({
+            rows:[
+              toolbar,
+              {cols:[menu, {view:"resizer"}, datatable, form]},
+              {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:30}
+            ],
+          });
+
+        });
+
       </script>
+
     </body>
 </html>
