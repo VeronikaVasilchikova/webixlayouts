@@ -15,6 +15,7 @@
           let toolbar = {
             view:"toolbar",
             css:"webix_dark",
+            height:40,
             paddingX:10,
             elements:[
               {
@@ -56,8 +57,8 @@
           };
 
           let datatable = {
-            view:"datatable",
-            autoConfig:true, scroll:"y",
+            view:"datatable", 
+            scroll:"y",
             columns: [
               {
                 id:"title",
@@ -120,13 +121,15 @@
                   {view:"button", value:"Clear", width: 110},
                 ]
               },
+              {},
             ]
           };
 
           webix.ui({
-            rows:[toolbar,
-              {height:500, cols:[menu, {view:"resizer"}, datatable, form]},
-              {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:40}
+            rows:[
+              toolbar,
+              {cols:[menu, {view:"resizer"}, datatable, form]},
+              {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:30}
             ],
           });
 
