@@ -44,14 +44,13 @@
                 template:"#value#",
                 data:menu_data,
                 scroll:false,
-                css:"webix_layout_clean"
               },
+              {},
               {
-                view:"button",
-                type:"icon",
-                icon:"wxi-check",
-                label:"Connected",
-                css:"green_button webix_transparent"
+                template:"<span class='webix_icon wxi-check'></span> Connected",
+                height:30,
+                type:"clean",
+                css:"green_template"
               }
             ]
           };
