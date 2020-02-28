@@ -56,16 +56,22 @@
           };
 
           const menu = {
-            width:180,
+            width:200,
             minWidth:150,
             css:"gray_menu",
             rows:[
               {
                 view:"list",
+                id:"menu_list",
                 template:"#value#",
                 data:menu_data,
                 scroll:false,
-                select:true
+                select:true,
+                on:{
+                  onAfterSelect:function(id){
+                    $$(id).show();
+                  }
+                }
               },
               {},
               {
@@ -109,10 +115,10 @@
 
           const main = {
             cells:[
-              {cols:[datatable,form]},
-              {template:"Users view"},
-              {template:"Products view"},
-              {template:"Admin"}
+              {id:"dashboard", cols:[datatable, form]},
+              {id:"users", template:"Users view"},
+              {id:"products", template:"Products view"},
+              {id:"locations", template:"Admin"}
             ]
           };
 
