@@ -12,3 +12,11 @@
   font-weight: 400;
   text-align: center;
 }
+
+.rank {
+  background-color: #F4F5F9;
+}
+
+.row_hover {
+  background-color: #EDEFF0;
+}
