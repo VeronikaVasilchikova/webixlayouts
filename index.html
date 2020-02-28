@@ -5,12 +5,30 @@
       <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
       <script src="menudata.js" type="text/javascript"></script>
       <script src="testdata.js" type="text/javascript"></script>
+      <script src="formEditFilmsData.js" type="text/javascript"></script>
       <link rel="stylesheet" href="style.css" type="text/css">
     </head>
     <body>
       <script type="text/javascript" charset="utf-8">
 
         webix.ready(function(){
+
+          //Create a popup for button in toolbar
+
+          webix.ui({
+            view:"popup",
+            id:"popupBtnToolbar",
+            width:200,
+            body:{
+              view:"list",
+              data:[
+                "Settings",
+                "Log Out"
+              ],
+              autoheight:true,
+              select:true
+            }
+          });
 
           let toolbar = {
             view:"toolbar",
@@ -25,11 +43,13 @@
               {},
               {
                 view:"button",
+                id:"btnToolbar",
                 type:"icon",
                 icon:"wxi-user",
                 label:"Profile",
                 width: 100,
-                css:"webix_transparent"
+                css:"webix_transparent",
+                popup:"popupBtnToolbar"
               }
             ]
           };
@@ -56,7 +76,8 @@
           };
 
           let datatable = {
-            view:"datatable", 
+            view:"datatable",
+            id:"filmList",
             scroll:"y",
             columns: [
               {
@@ -86,42 +107,22 @@
 
           let form = {
             view:"form",
-            width:280,
+            id:"editFilms",
+            width:400,
             paddingX:25,
-            elements:[
-              {
-                template:"Edit films",
-                type:"section"
+            elements:form_edit_films_data,
+            rules:{
+              title: webix.rules.isNotEmpty,
+              year:function(value) {
+                return value > 1970 && value < currentYear;
               },
-              {
-                view:"text",
-                label:"Title",
-                name:"title"
+              rating:function(value) {
+                return !value || value != 0;
               },
-              {
-                view:"text",
-                label:"Year",
-                name:"year"
-              },
-              {
-                view:"text",
-                label:"Rating",
-                name:"rating"
-              },
-              {
-                view:"text",
-                label:"Votes",
-                name:"votes"
-              },
-              {
-                margin:10,
-                cols:[
-                  {view:"button", value:"Add new", css:"webix_primary", width: 110},
-                  {view:"button", value:"Clear", width: 110},
-                ]
-              },
-              {},
-            ]
+              votes:function(value) {
+                return value < 100000;
+              }
+            }
           };
 
           webix.ui({
@@ -130,6 +131,37 @@
               {cols:[menu, {view:"resizer"}, datatable, form]},
               {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:30}
             ],
+          });
+
+          // Add method "attachEvent" to buttons in form
+
+          $$("btnAddNew").attachEvent("onItemClick", function() {
+            if ($$("editFilms").validate()) {
+              const formData = $$("editFilms").getValues();
+              $$("filmList").add(formData);
+              webix.message("Validation is successfull! Your data has been entered!");
+            } else {
+              webix.message("Validation is failed! You should fix wrong data");
+            }
+          });
+
+          $$("btnClear").attachEvent("onItemClick", function() {
+            webix.confirm({
+              title: "Clear this form",
+              text: "Are you sure you want to clear this form?",
+            })
+            .then(
+                function(){
+                  $$("editFilms").clear();
+                  $$("editFilms").clearValidation();
+                  webix.message("Form cleaning is confirmed");
+                }
+              )
+                .fail(
+                  function(){
+                    webix.message("Form cleaning is rejected");
+                  }
+                )
           });
 
         });
