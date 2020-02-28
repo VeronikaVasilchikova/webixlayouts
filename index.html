@@ -108,14 +108,12 @@
           let form = {
             view:"form",
             id:"editFilms",
-            width:280,
+            width:400,
             paddingX:25,
             elements:form_edit_films_data,
             rules:{
               title: webix.rules.isNotEmpty,
               year:function(value) {
-                const today = new Date();
-                const currentYear = today.getFullYear();
                 return value > 1970 && value < currentYear;
               },
               rating:function(value) {
@@ -143,8 +141,6 @@
               $$("filmList").add(formData);
               webix.message("Validation is successfull! Your data has been entered!");
             } else {
-              $$('editFilms').config.width = 400;
-              $$('editFilms').resize();
               webix.message("Validation is failed! You should fix wrong data");
             }
           });
@@ -153,25 +149,19 @@
             webix.confirm({
               title: "Clear this form",
               text: "Are you sure you want to clear this form?",
-              callback: function(result) {
-                if (result) {
-                  $$("editFilms").clear();
-                  $$("editFilms").clearValidation();
-                  if($$('editFilms').config.width === 400) {
-                    $$('editFilms').config.width = 280;
-                    $$('editFilms').resize();
-                  }
-                }
-              }
             })
             .then(
-              function(){
+                function(){
+                  $$("editFilms").clear();
+                  $$("editFilms").clearValidation();
                   webix.message("Form cleaning is confirmed");
-              },
-              function(){
-                  webix.message("Form cleaning is rejected");
-              }
-            );
+                }
+              )
+                .fail(
+                  function(){
+                    webix.message("Form cleaning is rejected");
+                  }
+                )
           });
 
         });
