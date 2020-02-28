@@ -1,0 +1,23 @@
+const columns_name = [
+  {
+    id:"title",
+    header:"Title",
+    fillspace:true
+  },
+  {
+    id:"year",
+    header:"Year"
+  },
+  {
+    id:"votes",
+    header:"Votes"
+  },
+  {
+    id:"rating",
+    header:"Rating"
+  },
+  {
+    id:"rank",
+    header:"Rank"
+  }
+  ];

@@ -5,6 +5,7 @@
       <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
       <script src="menudata.js" type="text/javascript"></script>
       <script src="testdata.js" type="text/javascript"></script>
+      <script src="datatablecolumns.js" type="text/javascript"></script>
       <script src="formEditFilmsData.js" type="text/javascript"></script>
       <link rel="stylesheet" href="style.css" type="text/css">
     </head>
@@ -47,7 +48,7 @@
                 type:"icon",
                 icon:"wxi-user",
                 label:"Profile",
-                width: 100,
+                width:100,
                 css:"webix_transparent",
                 popup:"popupBtnToolbar"
               }
@@ -64,6 +65,7 @@
                 template:"#value#",
                 data:menu_data,
                 scroll:false,
+                select:true
               },
               {},
               {
@@ -79,29 +81,7 @@
             view:"datatable",
             id:"filmList",
             scroll:"y",
-            columns: [
-              {
-                id:"title",
-                header:"Title",
-                fillspace:true
-              },
-              {
-                id:"year",
-                header:"Year"
-              },
-              {
-                id:"votes",
-                header:"Votes"
-              },
-              {
-                id:"rating",
-                header:"Rating"
-              },
-              {
-                id:"rank",
-                header:"Rank"
-              }
-            ],
+            columns: columns_name,
             data:small_film_set
           };
 
