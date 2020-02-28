@@ -17,7 +17,6 @@ const form_edit_films_data = [
     view:"text",
     label:"Year",
     name:"year",
-    //bottomPadding: 25,
     invalidMessage:`Year should be between 1970 and ${currentYear}`
   },
   {
