@@ -30,7 +30,7 @@
             }
           });
 
-          let toolbar = {
+          const toolbar = {
             view:"toolbar",
             css:"webix_dark",
             height:40,
@@ -54,7 +54,7 @@
             ]
           };
 
-          let menu = {
+          const menu = {
             width:180,
             minWidth:150,
             css:"gray_menu",
@@ -75,7 +75,7 @@
             ]
           };
 
-          let datatable = {
+          const datatable = {
             view:"datatable",
             id:"filmList",
             scroll:"y",
@@ -105,7 +105,7 @@
             data:small_film_set
           };
 
-          let form = {
+          const form = {
             view:"form",
             id:"editFilms",
             width:400,
@@ -125,10 +125,21 @@
             }
           };
 
+          // Create a multiview with four cells
+
+          const main = {
+            cells:[
+              {cols:[datatable,form]},
+              {template:"Users view"},
+              {template:"Products view"},
+              {template:"Admin"}
+            ]
+          };
+
           webix.ui({
             rows:[
               toolbar,
-              {cols:[menu, {view:"resizer"}, datatable, form]},
+              {cols:[menu, {view:"resizer"}, main]},
               {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:30}
             ],
           });
