@@ -18,8 +18,6 @@
 
         webix.ready(function(){
 
-          //Create a popup for button in toolbar
-
           webix.ui({
             view:"popup",
             id:"popupBtnToolbar",
@@ -101,7 +99,15 @@
                 this.remove(id);
                 return false;
               }
-            }
+            },
+            scheme:{
+              $init:function(obj){
+                if(obj.votes.includes(',')) {
+                  obj.votes = obj.votes.replace(/\,/, ".");
+                  obj.votes = parseFloat(obj.votes)*1000;
+                }
+              }
+            },
           };
 
           const form = {
@@ -119,10 +125,6 @@
                 return !value || value != 0;
               },
               votes:function(value) {
-                if(value.includes(',')) {
-                  value = value.replace(/\,/, ".");
-                  value = parseFloat(value);
-                }
                 return value < 100000;
               }
             }
@@ -191,8 +193,8 @@
             ],
             data:products
           }
-          // Create a multiview with four cells
 
+          // Create a multiview with four cells
           const main = {
             cells:[
               {id:"dashboard", cols:[datatable, form]},
@@ -214,6 +216,13 @@
           const filmList = $$("filmList");
           const editFilms = $$("editFilms");
 
+          // Put selected data from filmList to Form
+          filmList.attachEvent("onAfterSelect", function(id){
+            const values = filmList.getItem(id);
+            editFilms.setValues(values);
+          });
+
+          // Add new data or update selected data from filmList using Form
           $$("btnAddNew").attachEvent("onItemClick", function() {
             if ($$("editFilms").validate()) {
               const formData = editFilms.getValues();
@@ -228,11 +237,7 @@
             }
           });
 
-          filmList.attachEvent("onAfterSelect", function(id){
-            const values = filmList.getItem(id);
-            editFilms.setValues(values);
-          });
-
+          // Enable Form cleaning via the btnClear button
           $$("btnClear").attachEvent("onItemClick", function() {
             webix.confirm({
               title: "Clear this form",
@@ -252,7 +257,8 @@
                   }
                 )
           });
-          
+
+          // Enable List filtering via the Text input
           const userList = $$("userList");
           $$("filterList").attachEvent("onTimedKeypress", function(){
             const text = this.getValue().toLowerCase();
@@ -263,6 +269,7 @@
             });
           });
 
+          // Enable sorting via the btnSortasc button
           $$("btnSortasc").attachEvent("onItemClick", function() {
             userList.sort({
               by:"#age#",
@@ -271,6 +278,7 @@
             });
           });
 
+          // Enable sorting via the btnSortdesc button
           $$("btnSortdesc").attachEvent("onItemClick", function() {
             userList.sort({
               by:"#age#",

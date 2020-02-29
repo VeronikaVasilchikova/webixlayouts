@@ -21,7 +21,7 @@ const new_columns_name = [
   {
     id:"votes",
     header:["Votes", {content:"numberFilter"}],
-    sort:"string"
+    sort:"int"
   },
   {
     width:50,
