@@ -9,6 +9,7 @@
       <script src="data/datatablecolumns.js" type="text/javascript"></script>
       <script src="data/newdatatablecolumns.js" type="text/javascript"></script>
       <script src="data/formEditFilmsData.js" type="text/javascript"></script>
+      <script src="data/users.js" type="text/javascript"></script>
       <link rel="stylesheet" href="css/style.css" type="text/css">
     </head>
     <body>
@@ -126,12 +127,51 @@
             }
           };
 
+          const userComponent = {
+            rows:[
+              {
+                view:"toolbar",
+                elements:[
+                  {view:"text", id:"filterList"},
+                  {view:"button", id:"btnSortasc", value:"Sort asc", css:"webix_primary", width:200},
+                  {view:"button", id:"btnSortdesc", value:"Sort desc", css:"webix_primary", width:200}
+                ]
+              },
+              {
+                view:"list",
+                id:"userList",
+                template:"#name# from #country# <span class='webix_icon wxi-close remove_icon'></span>",
+                select:true,
+                css:"five",
+                data:webix.copy(users),
+                onClick:{
+                  "wxi-close":function(e, id){
+                    this.remove(id);
+                    return false;
+                  }
+                }
+              }
+            ]
+          };
+
+          const userChart = {
+            view:"chart",
+            type:"bar",
+            value:"#age#",
+            barWidth:35,
+            border:true,
+            xAxis:{
+              template:"#age#"
+            },
+            data:webix.copy(users)
+          }
+
           // Create a multiview with four cells
 
           const main = {
             cells:[
               {id:"dashboard", cols:[datatable, form]},
-              {id:"users", template:"Users view"},
+              {id:"users", rows:[userComponent, userChart]},
               {id:"products", template:"Products view"},
               {id:"locations", template:"Admin"}
             ]
@@ -148,6 +188,7 @@
           // Add method "attachEvent" to buttons in form
           const filmList = $$("filmList");
           const editFilms = $$("editFilms");
+          const userList = $$("userList");
 
           $$("btnAddNew").attachEvent("onItemClick", function() {
             if ($$("editFilms").validate()) {
@@ -186,6 +227,31 @@
                     webix.message("Form cleaning is rejected");
                   }
                 )
+          });
+
+          $$("filterList").attachEvent("onTimedKeypress", function(){
+            const text = this.getValue().toLowerCase();
+            userList.filter(function(obj){
+              let filter = [obj.name, obj.country].join("|");
+              filter = filter.toLowerCase();
+              return (filter.indexOf(text) != -1);
+            });
+          });
+
+          $$("btnSortasc").attachEvent("onItemClick", function() {
+            userList.sort({
+              by:"#age#",
+              dir:"asc",
+              as:"int"
+            });
+          });
+
+          $$("btnSortdesc").attachEvent("onItemClick", function() {
+            userList.sort({
+              by:"#age#",
+              dir:"desc",
+              as:"int"
+            });
           });
 
         });

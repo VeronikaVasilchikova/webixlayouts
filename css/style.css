@@ -20,3 +20,12 @@
 .row_hover {
   background-color: #EDEFF0;
 }
+
+.remove_icon {
+  float: right;
+  margin-top: 8px;
+}
+
+.webix_view .five .webix_list_item:nth-child(-n+5) {
+  background-color: #f1f9f9;
+}
