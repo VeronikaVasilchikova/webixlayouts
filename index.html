@@ -145,7 +145,7 @@
                 template:"#name# from #country# <span class='webix_icon wxi-close remove_icon'></span>",
                 select:true,
                 css:"five",
-                data:webix.copy(users),
+                url:"data/users.js",
                 onClick:{
                   "wxi-close":function(e, id){
                     this.remove(id);
@@ -165,8 +165,8 @@
             xAxis:{
               template:"#age#"
             },
-            data:webix.copy(users)
-          }
+            url:"data/users.js"
+          };
 
           const treeTable = {
             view:"treetable",
@@ -190,8 +190,8 @@
                 width:200
               }
             ],
-            data:products
-          }
+            url:"data/products.js"
+          };
 
           // Create a multiview with four cells
           const main = {
