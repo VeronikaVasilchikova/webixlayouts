@@ -26,6 +26,6 @@
   margin-top: 8px;
 }
 
-.webix_view .five .webix_list_item:nth-child(-n+5) {
-  background-color: #f1f9f9;
+.highlight {
+  background-color: yellow;
 }
