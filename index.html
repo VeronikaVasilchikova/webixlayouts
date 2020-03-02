@@ -213,21 +213,12 @@
           const filmList = $$("filmList");
           const editFilms = $$("editFilms");
 
-          // Put selected data from filmList to Form
-          filmList.attachEvent("onAfterSelect", function(id){
-            const values = filmList.getItem(id);
-            editFilms.setValues(values);
-          });
-
-          // Add new data or update selected data from filmList using Form
+          // Bind a form to datatable
+          editFilms.bind(filmList);
+          
           $$("btnAddNew").attachEvent("onItemClick", function() {
-            if ($$("editFilms").validate()) {
-              const formData = editFilms.getValues();
-              if (formData.id){
-                filmList.updateItem(formData.id, formData);
-              } else {
-                filmList.add(formData);
-              }
+            if (editFilms.validate()) {
+              editFilms.save();
               webix.message("Validation is successfull! Your data has been entered!");
             } else {
               webix.message("Validation is failed! You should fix wrong data");
