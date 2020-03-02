@@ -3,17 +3,17 @@
     <head>
       <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" type="text/css">
       <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
-      <script src="menudata.js" type="text/javascript"></script>
-      <script src="testdata.js" type="text/javascript"></script>
-      <script src="formEditFilmsData.js" type="text/javascript"></script>
-      <link rel="stylesheet" href="style.css" type="text/css">
+      <script src="data/menudata.js" type="text/javascript"></script>
+      <script src="data/testdata.js" type="text/javascript"></script>
+      <script src="data/data.js" type="text/javascript"></script>
+      <script src="data/newdatatablecolumns.js" type="text/javascript"></script>
+      <script src="data/formEditFilmsData.js" type="text/javascript"></script>
+      <link rel="stylesheet" href="css/style.css" type="text/css">
     </head>
     <body>
       <script type="text/javascript" charset="utf-8">
 
         webix.ready(function(){
-
-          //Create a popup for button in toolbar
 
           webix.ui({
             view:"popup",
@@ -30,7 +30,7 @@
             }
           });
 
-          let toolbar = {
+          const toolbar = {
             view:"toolbar",
             css:"webix_dark",
             height:40,
@@ -47,23 +47,30 @@
                 type:"icon",
                 icon:"wxi-user",
                 label:"Profile",
-                width: 100,
+                width:100,
                 css:"webix_transparent",
                 popup:"popupBtnToolbar"
               }
             ]
           };
 
-          let menu = {
-            width:180,
+          const menu = {
+            width:200,
             minWidth:150,
             css:"gray_menu",
             rows:[
               {
                 view:"list",
+                id:"menu_list",
                 template:"#value#",
                 data:menu_data,
                 scroll:false,
+                select:true,
+                on:{
+                  onAfterSelect:function(id){
+                    $$(id).show();
+                  }
+                }
               },
               {},
               {
@@ -75,37 +82,31 @@
             ]
           };
 
-          let datatable = {
+          const datatable = {
             view:"datatable",
             id:"filmList",
-            scroll:"y",
-            columns: [
-              {
-                id:"title",
-                header:"Title",
-                fillspace:true
-              },
-              {
-                id:"year",
-                header:"Year"
-              },
-              {
-                id:"votes",
-                header:"Votes"
-              },
-              {
-                id:"rating",
-                header:"Rating"
-              },
-              {
-                id:"rank",
-                header:"Rank"
+            autoConfig:true,
+            leftSplit:1,
+            columns:new_columns_name,
+            url:"data/data.js",
+            hover:"row_hover",
+            select:true,
+            onClick:{
+              "wxi-trash":function(e, id){
+                this.remove(id);
+                return false;
               }
-            ],
-            data:small_film_set
+            },
+            scheme:{
+              $init:function(obj){
+                if(obj.votes.includes(',')) {
+                  obj.votes = obj.votes.replace(/\,/g, "")*1;
+                }
+              }
+            },
           };
 
-          let form = {
+          const form = {
             view:"form",
             id:"editFilms",
             width:400,
@@ -125,26 +126,115 @@
             }
           };
 
+          const userComponent = {
+            rows:[
+              {
+                view:"toolbar",
+                elements:[
+                  {view:"text", id:"filterList"},
+                  {view:"button", id:"btnSortasc", value:"Sort asc", css:"webix_primary", width:200},
+                  {view:"button", id:"btnSortdesc", value:"Sort desc", css:"webix_primary", width:200}
+                ]
+              },
+              {
+                view:"list",
+                id:"userList",
+                template:"#name# from #country# <span class='webix_icon wxi-close remove_icon'></span>",
+                select:true,
+                css:"five",
+                url:"data/users.js",
+                onClick:{
+                  "wxi-close":function(e, id){
+                    this.remove(id);
+                    return false;
+                  }
+                }
+              }
+            ]
+          };
+
+          const userChart = {
+            view:"chart",
+            type:"bar",
+            value:"#age#",
+            barWidth:35,
+            border:true,
+            xAxis:{
+              template:"#age#"
+            },
+            url:"data/users.js"
+          };
+
+          const treeTable = {
+            view:"treetable",
+            scroll:"y",
+            select:true,
+            columns:[
+              {
+                id:"id",
+                header:"",
+                width:100
+              },
+              {
+                id:"title",
+                header:"Title",
+                fillspace:true,
+                template:"{common.treetable()} #title#"
+              },
+              {
+                id:"price",
+                header:"Price",
+                width:200
+              }
+            ],
+            url:"data/products.js",
+            ready:function(){this.openAll()}
+          };
+
+          // Create a multiview with four cells
+          const main = {
+            cells:[
+              {id:"dashboard", cols:[datatable, form]},
+              {id:"users", rows:[userComponent, userChart]},
+              {id:"products", rows:[treeTable]},
+              {id:"locations", template:"Admin"}
+            ]
+          };
+
           webix.ui({
             rows:[
               toolbar,
-              {cols:[menu, {view:"resizer"}, datatable, form]},
+              {cols:[menu, {view:"resizer"}, main]},
               {template:"The software is provided by <a href='https://webix.com' target='_blank'>https://webix.com</a>. All rights reserved (c)", css:"template_footer", height:30}
             ],
           });
 
           // Add method "attachEvent" to buttons in form
+          const filmList = $$("filmList");
+          const editFilms = $$("editFilms");
 
+          // Put selected data from filmList to Form
+          filmList.attachEvent("onAfterSelect", function(id){
+            const values = filmList.getItem(id);
+            editFilms.setValues(values);
+          });
+
+          // Add new data or update selected data from filmList using Form
           $$("btnAddNew").attachEvent("onItemClick", function() {
             if ($$("editFilms").validate()) {
-              const formData = $$("editFilms").getValues();
-              $$("filmList").add(formData);
+              const formData = editFilms.getValues();
+              if (formData.id){
+                filmList.updateItem(formData.id, formData);
+              } else {
+                filmList.add(formData);
+              }
               webix.message("Validation is successfull! Your data has been entered!");
             } else {
               webix.message("Validation is failed! You should fix wrong data");
             }
           });
 
+          // Enable Form cleaning via the btnClear button
           $$("btnClear").attachEvent("onItemClick", function() {
             webix.confirm({
               title: "Clear this form",
@@ -152,8 +242,9 @@
             })
             .then(
                 function(){
-                  $$("editFilms").clear();
-                  $$("editFilms").clearValidation();
+                  editFilms.clear();
+                  editFilms.clearValidation();
+                  filmList.unselectAll();
                   webix.message("Form cleaning is confirmed");
                 }
               )
@@ -162,6 +253,35 @@
                     webix.message("Form cleaning is rejected");
                   }
                 )
+          });
+
+          // Enable List filtering via the Text input
+          const userList = $$("userList");
+          $$("filterList").attachEvent("onTimedKeypress", function(){
+            const text = this.getValue().toLowerCase();
+            userList.filter(function(obj){
+              let filter = [obj.name, obj.country].join("|");
+              filter = filter.toLowerCase();
+              return (filter.indexOf(text) != -1);
+            });
+          });
+
+          // Enable sorting via the btnSortasc button
+          $$("btnSortasc").attachEvent("onItemClick", function() {
+            userList.sort({
+              by:"#name#",
+              dir:"asc",
+              as:"string"
+            });
+          });
+
+          // Enable sorting via the btnSortdesc button
+          $$("btnSortdesc").attachEvent("onItemClick", function() {
+            userList.sort({
+              by:"#name#",
+              dir:"desc",
+              as:"string"
+            });
           });
 
         });
