@@ -101,7 +101,7 @@
               $init:function(obj){
                 if(obj.votes.includes(',')) {
                   obj.votes = obj.votes.replace(/\,/, ".");
-                  obj.votes = parseFloat(obj.votes)*1000;
+                  obj.votes = Math.round(parseFloat(obj.votes)*1000);
                 }
               }
             },
