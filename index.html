@@ -269,18 +269,18 @@
           // Enable sorting via the btnSortasc button
           $$("btnSortasc").attachEvent("onItemClick", function() {
             userList.sort({
-              by:"#age#",
+              by:"#name#",
               dir:"asc",
-              as:"int"
+              as:"string"
             });
           });
 
           // Enable sorting via the btnSortdesc button
           $$("btnSortdesc").attachEvent("onItemClick", function() {
             userList.sort({
-              by:"#age#",
+              by:"#name#",
               dir:"desc",
-              as:"int"
+              as:"string"
             });
           });
 
