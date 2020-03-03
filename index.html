@@ -340,9 +340,9 @@
               columnId:"year",
               compare:function(value, filter, item){
                 if(filter == 1) return value;
-                if(filter == 2) return value < 2000;
-                if(filter == 3) return value >= 2000 && value < currentYear;
-                if(filter == 4) return value == currentYear;
+                if(filter == 2) return value < 1980;
+                if(filter == 3) return value >= 1980 && value < 2000;
+                if(filter == 4) return value >= 2000 && value <= currentYear;
               }
             },
             {
