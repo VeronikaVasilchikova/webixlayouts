@@ -131,10 +131,10 @@
                     sort:"string"
                   },
                   {
-                    id:"categoryId",
-                    collection:collectOfCategories,
-                    sort:"string",
+                    id:"cat_id",
                     header:["Category", {content:"selectFilter"}],
+                    collection:collectOfCategories,
+                    sort:"string"
                   },
                   {
                     id:"rating",
@@ -169,13 +169,12 @@
                 scheme:{
                   $init:function(obj){
                     if(obj.votes.includes(',')) {
-                      obj.votes = obj.votes.replace(/\,/, ".");
-                      obj.votes = parseFloat(obj.votes)*1000;
-                    }
+                      obj.votes = obj.votes.replace(/\,/, "")*1;
+                    };
                     if(obj.rating.includes(',')) {
-                      obj.rating = obj.rating.replace(/\,/, ".");
-                    }
-                    obj.categoryId = getRandomInt(1, 5);
+                      obj.rating = obj.rating.replace(/\,/, ".")*1;
+                    };
+                    obj.cat_id = getRandomInt(1, 5);
                   }
                 },
               }
@@ -220,9 +219,9 @@
               },
               {
                 view:"richselect",
-                id:"categoryId",
+                id:"cat_id",
                 label:"CategoryId",
-                name:"categoryId",
+                name:"cat_id",
                 options:collectOfCategories
               },
               {
@@ -248,6 +247,7 @@
             }
           };
 
+          // Enable list editing
           webix.protoUI({
             name:"editlist"
           }, webix.EditAbility, webix.ui.list);
@@ -258,8 +258,8 @@
                 view:"toolbar",
                 elements:[
                   {view:"text", id:"filterList"},
-                  {view:"button", id:"btnSortasc", value:"Sort asc", css:"webix_primary", width:200},
-                  {view:"button", id:"btnSortdesc", value:"Sort desc", css:"webix_primary", width:200},
+                  {view:"button", id:"btnSortasc", value:"Sort asc by age", css:"webix_primary", width:200},
+                  {view:"button", id:"btnSortdesc", value:"Sort desc by age", css:"webix_primary", width:200},
                   {view:"button", id:"btnAddUser", value:"Add User", css:"webix_primary", width:200}
                 ]
               },
@@ -269,9 +269,9 @@
                 template:"#name#, #age#, from #country# <span class='webix_icon wxi-close remove_icon'></span>",
                 select:true,
                 editable:true,
-                editaction:"dblclick",
                 editor:"text",
                 editValue:"name",
+                editaction:"dblclick",
                 scheme:{
                   $change:function(item){
                     if (item.age < 26)
@@ -315,14 +315,16 @@
               start:0,
               end:10,
               step:2
-            },
-          }
+            }
+          };
 
           const treeTable = {
             view:"treetable",
+            id:"treeTable",
             scroll:"y",
-            select:true,
+            select:"cell",
             editable:true,
+            editaction:"dblclick",
             columns:[
               {
                 id:"id",
@@ -355,7 +357,7 @@
                 return false;
               }
             }
-          }
+          };
 
           // Render a datatable for visualizing categories
           const adminDatatable = {
@@ -396,6 +398,7 @@
             ]
           };
 
+
           // Create a multiview with four cells
           const main = {
             cells:[
@@ -434,7 +437,6 @@
           $$("btnAddNew").attachEvent("onItemClick", function() {
             if (editFilms.validate()) {
               editFilms.save();
-              filmList.showItem(filmList.getLastId());
               webix.message("Validation is successfull! Your data has been entered!");
             } else {
               webix.message("Validation is failed! You should fix wrong data");
@@ -447,10 +449,10 @@
             {
               columnId:"year",
               compare:function(value, filter, item){
-                if(filter === 1) return true;
-                if(filter === 2) return value < 1980;
-                if(filter === 3) return value >= 1980 && value < 2000;
-                if(filter === 4) return value >= 2000 && value <= currentYear;
+                if(filter == 1) return true;
+                if(filter == 2) return value < 1980;
+                if(filter == 3) return value >= 1980 && value < 2000;
+                if(filter == 4) return value >= 2000 && value <= currentYear;
               }
             },
             {
@@ -469,15 +471,19 @@
               title: "Clear this form",
               text: "Are you sure you want to clear this form?",
             })
-              .then(function(){
-                editFilms.clear();
-                editFilms.clearValidation();
-                filmList.unselectAll();
-                webix.message("Form cleaning is confirmed");
-              })
-                .fail(function(){
-                  webix.message("Form cleaning is rejected");
-                });
+            .then(
+                function(){
+                  editFilms.clear();
+                  editFilms.clearValidation();
+                  filmList.unselectAll();
+                  webix.message("Form cleaning is confirmed");
+                }
+              )
+                .fail(
+                  function(){
+                    webix.message("Form cleaning is rejected");
+                  }
+                )
           });
 
           // Enable List filtering via the Text input
@@ -491,72 +497,72 @@
             });
           });
 
-          // Enable sorting via the btnSortasc button by age
-          $$("btnSortasc").attachEvent("onItemClick", function() {
-            userList.sort({
-              by:"#age#",
-              dir:"asc",
-              as:"int"
+            // Enable sorting via the btnSortasc button by age
+            $$("btnSortasc").attachEvent("onItemClick", function() {
+              userList.sort({
+                by:"#age#",
+                dir:"asc",
+                as:"int"
+              });
             });
-          });
 
-          // Enable sorting via the btnSortdesc button by age
-          $$("btnSortdesc").attachEvent("onItemClick", function() {
-            userList.sort({
-              by:"#age#",
-              dir:"desc",
-              as:"int"
+            // Enable sorting via the btnSortdesc button by age
+            $$("btnSortdesc").attachEvent("onItemClick", function() {
+              userList.sort({
+                by:"#age#",
+                dir:"desc",
+                as:"int"
+              });
             });
-          });
 
-          // Sync list and chart to the “users” collection
-          userList.sync(collectOfUsers);
+            // Sync list and chart to the “users” collection
+            userList.sync(collectOfUsers);
 
-          // Sync chart data to list data and group chart data by country depending on count of users
-          $$("userChart").sync(collectOfUsers, function(){
-            this.group({
-              by:"country",
-              map:{
-                value:["country","count"]
-              }
+            // Sync chart data to list data and group chart data by country depending on count of users
+            $$("userChart").sync(collectOfUsers, function(){
+              this.group({
+                by:"country",
+                map:{
+                  value:["country","count"]
+                }
+              });
             });
-          });
 
-          // Add a new user with some name, random age and country to the list by clicking on the button "Add user"
-          const countryArray = ["Germany", "Spain", "Belarus", "USA", "China"]
-          $$("btnAddUser").attachEvent("onItemClick", function(){
-            collectOfUsers.add({
-              name:"New User",
-              age:getRandomInt(1, 100),
-              country:`${countryArray[getRandomInt(0, 5)]}`
-            }, 0);
-          });
+            // Add a new user with some name, random age and country to the list by clicking on the button "Add user"
+            const countryArray = ["Germany", "Spain", "Belarus", "USA", "China"]
+            $$("btnAddUser").attachEvent("onItemClick", function(){
+              userList.add({
+                name:"New User",
+                age:getRandomInt(1, 100),
+                country:`${countryArray[getRandomInt(0, 5)]}`
+              }, 0);
+            });
 
-          // Sync the datatable into Admin tab with the collectOfCategories collection
-          $$("categoriesList").sync(collectOfCategories);
+            // Sync the datatable into Admin tab with the collectOfCategories collection
+            $$("categoriesList").sync(collectOfCategories);
 
-          // Enable delete operation for the datatable into Admin tab
-          $$("btnDeleteCategory").attachEvent("onItemClick", function(){
-            let sel = $$("categoriesList").getSelectedId();
-            if(sel) {
-              webix.confirm({
-                title: "Remove this category",
-                text: "Are you sure you want to remove this category?",
-              })
-                .then(function(){
-                  collectOfCategories.remove(sel);
-                  webix.message("Category removing is confirmed");
+            // Enable delete operation for the datatable into Admin tab
+            $$("btnDeleteCategory").attachEvent("onItemClick", function(){
+              let sel = $$("categoriesList").getSelectedId();
+              if(sel) {
+                webix.confirm({
+                  title: "Remove this category",
+                  text: "Are you sure you want to remove this category?",
                 })
-                  .fail(function(){
-                    webix.message("Category removing is rejected");
-                  });
-            };
-          });
+                  .then(function(){
+                    collectOfCategories.remove(sel);
+                    webix.message("Category removing is confirmed");
+                  })
+                    .fail(function(){
+                      webix.message("Category removing is rejected");
+                    });
+              };
+            });
 
-          // Enable add operation for the datatable into Admin tab
-          $$("btnAddCategory").attachEvent("onItemClick", function(){
-            collectOfCategories.add({value:"New category"}, 0);
-          });
+            // Enable add operation for the datatable into Admin tab
+            $$("btnAddCategory").attachEvent("onItemClick", function(){
+              collectOfCategories.add({value:"New category"}, 0);
+            });
 
         });
 
