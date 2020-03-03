@@ -152,8 +152,18 @@
                 select:true,
                 onClick:{
                   "wxi-trash":function(e, id){
-                    this.remove(id);
-                    return false;
+                    webix.confirm({
+                      title: "Remove this item",
+                      text: "Are you sure you want to remove this item?",
+                    })
+                      .then(function(){
+                        $$("filmList").remove(id);
+                        webix.message("Item removing is confirmed");
+                        return false;
+                      })
+                        .fail(function(){
+                          webix.message("Item removing is rejected");
+                        });
                   }
                 },
                 scheme:{
@@ -213,6 +223,7 @@
                 template:"#name#, #age#, from #country# <span class='webix_icon wxi-close remove_icon'></span>",
                 select:true,
                 editable:true,
+                editaction:"dblclick",
                 editor:"text",
                 editValue:"name",
                 scheme:{
@@ -224,8 +235,18 @@
                 url:"data/users.js",
                 onClick:{
                   "wxi-close":function(e, id){
-                    this.remove(id);
-                    return false;
+                    webix.confirm({
+                      title: "Remove this item",
+                      text: "Are you sure you want to remove this item?",
+                    })
+                      .then(function(){
+                        $$("userList").remove(id);
+                        webix.message("Item removing is confirmed");
+                        return false;
+                      })
+                        .fail(function(){
+                          webix.message("Item removing is rejected");
+                        });
                   }
                 },
                 rules:{
@@ -364,19 +385,15 @@
               title: "Clear this form",
               text: "Are you sure you want to clear this form?",
             })
-            .then(
-                function(){
-                  editFilms.clear();
-                  editFilms.clearValidation();
-                  filmList.unselectAll();
-                  webix.message("Form cleaning is confirmed");
-                }
-              )
-                .fail(
-                  function(){
-                    webix.message("Form cleaning is rejected");
-                  }
-                )
+              .then(function(){
+                editFilms.clear();
+                editFilms.clearValidation();
+                filmList.unselectAll();
+                webix.message("Form cleaning is confirmed");
+              })
+                .fail(function(){
+                  webix.message("Form cleaning is rejected");
+                });
           });
 
           // Enable List filtering via the Text input
