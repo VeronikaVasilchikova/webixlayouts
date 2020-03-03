@@ -5,14 +5,23 @@
       <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
       <script src="data/menudata.js" type="text/javascript"></script>
       <script src="data/testdata.js" type="text/javascript"></script>
-      <script src="data/categories.js" type="text/javascript"></script>
-      <script src="data/formEditFilmsData.js" type="text/javascript"></script>
       <link rel="stylesheet" href="css/style.css" type="text/css">
     </head>
     <body>
       <script type="text/javascript" charset="utf-8">
 
         webix.ready(function(){
+
+          const today = new Date();
+          const currentYear = today.getFullYear();
+
+          //Create ​ data collections​  for storing data that will be used multiple times
+          const collectOfCategories = new webix.DataCollection({
+            url:"data/categories.js"
+          });
+          const collectOfUsers = new webix.DataCollection({
+            url:"data/users.js"
+          });
 
           webix.ui({
             view:"popup",
@@ -111,7 +120,8 @@
                     id:"rank",
                     header:"#",
                     width:60,
-                    css:"rank"
+                    css:"rank",
+                    sort:"int"
                   },
                   {
                     id:"title",
@@ -121,10 +131,10 @@
                     sort:"string"
                   },
                   {
-                    id:"cat_id",
+                    id:"categoryId",
+                    collection:collectOfCategories,
+                    sort:"string",
                     header:["Category", {content:"selectFilter"}],
-                    options:category,
-                    sort:"string"
                   },
                   {
                     id:"rating",
@@ -169,12 +179,13 @@
                 scheme:{
                   $init:function(obj){
                     if(obj.votes.includes(',')) {
-                      obj.votes = obj.votes.replace(/\,/, "")*1;
-                    };
+                      obj.votes = obj.votes.replace(/\,/, ".");
+                      obj.votes = parseFloat(obj.votes)*1000;
+                    }
                     if(obj.rating.includes(',')) {
-                      obj.rating = obj.rating.replace(/\,/, ".")*1;
-                    };
-                    obj.cat_id = getRandomInt(1, 5);
+                      obj.rating = obj.rating.replace(/\,/, ".");
+                    }
+                    obj.categoryId = getRandomInt(1, 5);
                   }
                 },
               }
@@ -186,11 +197,57 @@
             id:"editFilms",
             width:400,
             paddingX:25,
-            elements:form_edit_films_data,
+            elements:[
+              {
+                template:"Edit films",
+                type:"section"
+              },
+              {
+                view:"text",
+                label:"Title",
+                name:"title",
+                required:true,
+                invalidMessage:"Title must be filled in"
+              },
+              {
+                view:"text",
+                label:"Year",
+                name:"year",
+                invalidMessage:`Year should be between 1970 and ${currentYear}`
+              },
+              {
+                view:"text",
+                label:"Rating",
+                name:"rating",
+                required:true,
+                invalidMessage:"Rating cannot be empty or 0"
+              },
+              {
+                view:"text",
+                label:"Votes",
+                name:"votes",
+                invalidMessage:"Votes must be less than 100000"
+              },
+              {
+                view:"richselect",
+                id:"categoryId",
+                label:"CategoryId",
+                name:"categoryId",
+                options:collectOfCategories
+              },
+              {
+                margin:10,
+                cols:[
+                  {view:"button", id:"btnAddNew", value:"Add new", css:"webix_primary", width: 110},
+                  {view:"button", id:"btnClear", value:"Clear", width: 110}
+                ]
+              },
+              {},
+            ],
             rules:{
               title: webix.rules.isNotEmpty,
               year:function(value) {
-                return value > 1970 && value < currentYear;
+                return value > 1970 && value <= currentYear;
               },
               rating:function(value) {
                 return !value || value != 0;
@@ -201,7 +258,6 @@
             }
           };
 
-          // Enable list editing
           webix.protoUI({
             name:"editlist"
           }, webix.EditAbility, webix.ui.list);
@@ -212,8 +268,8 @@
                 view:"toolbar",
                 elements:[
                   {view:"text", id:"filterList"},
-                  {view:"button", id:"btnSortasc", value:"Sort asc by age", css:"webix_primary", width:200},
-                  {view:"button", id:"btnSortdesc", value:"Sort desc by age", css:"webix_primary", width:200},
+                  {view:"button", id:"btnSortasc", value:"Sort asc", css:"webix_primary", width:200},
+                  {view:"button", id:"btnSortdesc", value:"Sort desc", css:"webix_primary", width:200},
                   {view:"button", id:"btnAddUser", value:"Add User", css:"webix_primary", width:200}
                 ]
               },
@@ -232,7 +288,6 @@
                       item.$css = "highlight";
                   }
                 },
-                url:"data/users.js",
                 onClick:{
                   "wxi-close":function(e, id){
                     webix.confirm({
@@ -250,8 +305,18 @@
                   }
                 },
                 rules:{
-                  name:webix.rules.isNotEmpty
-                },
+                  name:function(value){
+                    if(value != "") {
+                      return true;
+                    } else {
+                      webix.message({
+                        text:"You should fill this field with a name",
+                        type:"error"
+                      });
+                      return false;
+                    }
+                  }
+                }
               }
             ]
           };
@@ -270,16 +335,14 @@
               start:0,
               end:10,
               step:2
-            }
-          };
+            },
+          }
 
           const treeTable = {
             view:"treetable",
-            id:"treeTable",
             scroll:"y",
-            select:"cell",
+            select:true,
             editable:true,
-            editaction:"dblclick",
             columns:[
               {
                 id:"id",
@@ -301,7 +364,6 @@
               }
             ],
             url:"data/products.js",
-            ready:function(){this.openAll()},
             rules:{
               title:webix.rules.isNotEmpty,
               price:webix.rules.isNumber
@@ -312,6 +374,32 @@
                 return false;
               }
             }
+          }
+
+          // Render a datatable for visualizing categories
+          const adminDatatable = {
+            rows:[
+              {
+                view:"toolbar",
+                elements:[
+                  {view:"button", id:"btnAddCategory", value:"Add Category", css:"webix_primary"},
+                  {view:"button", id:"btnDeleteCategory", value:"Delete Category", css:"webix_primary"}
+                ]
+              },
+              {
+                view:"datatable",
+                id:"categoriesList",
+                width: 350,
+                columns:[
+                  { id:"value",	header:"Category of film",	editor:"text", fillspace:true, },
+                ],
+                hover:"row_hover",
+                editaction:"dblclick",
+                editable:true,
+                scrollX:false,
+                select:true
+              }
+            ]
           };
 
           // Create a multiview with four cells
@@ -320,7 +408,7 @@
               {id:"dashboard", cols:[datatable, form]},
               {id:"users", rows:[userComponent, userChart]},
               {id:"products", rows:[treeTable]},
-              {id:"locations", template:"Admin"}
+              {id:"admin", rows:[adminDatatable]}
             ]
           };
 
@@ -332,22 +420,12 @@
             ],
           });
 
-          // Events
-
+          // Add method "attachEvent" to buttons in form
           const filmList = $$("filmList");
           const editFilms = $$("editFilms");
 
-          // Create a function getRandomInt to generate random integer
-          function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min)) + min;
-          };
-
           // Bind a form to datatable
           editFilms.bind(filmList);
-
-          // Edit datatable via the bound form
           $$("btnAddNew").attachEvent("onItemClick", function() {
             if (editFilms.validate()) {
               editFilms.save();
@@ -357,21 +435,27 @@
             }
           });
 
-          // Enable filtering using both tab and header filters working together
+          // Create a function getRandomInt to generate random integer
+          function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+          }
+
           filmList.registerFilter(
             $$("tabbar"),
             {
               columnId:"year",
               compare:function(value, filter, item){
-                if(filter === 1) return true;
-                if(filter === 2) return value < 1980;
-                if(filter === 3) return value >= 1980 && value < 2000;
-                if(filter === 4) return value >= 2000 && value <= currentYear;
+                if(filter == 1) return value;
+                if(filter == 2) return value < 2000;
+                if(filter == 3) return value >= 2000 && value < currentYear;
+                if(filter == 4) return value == currentYear;
               }
             },
             {
               getValue:function(object){
-                return object.getValue();
+                return object.getValue();;
               },
               setValue:function(object, value){
                 object.setValue(value);
@@ -385,15 +469,19 @@
               title: "Clear this form",
               text: "Are you sure you want to clear this form?",
             })
-              .then(function(){
-                editFilms.clear();
-                editFilms.clearValidation();
-                filmList.unselectAll();
-                webix.message("Form cleaning is confirmed");
-              })
-                .fail(function(){
-                  webix.message("Form cleaning is rejected");
-                });
+            .then(
+                function(){
+                  editFilms.clear();
+                  editFilms.clearValidation();
+                  filmList.unselectAll();
+                  webix.message("Form cleaning is confirmed");
+                }
+              )
+                .fail(
+                  function(){
+                    webix.message("Form cleaning is rejected");
+                  }
+                )
           });
 
           // Enable List filtering via the Text input
@@ -407,7 +495,7 @@
             });
           });
 
-          // Enable sorting via the btnSortasc button by age
+          // Enable sorting via the btnSortasc button
           $$("btnSortasc").attachEvent("onItemClick", function() {
             userList.sort({
               by:"#age#",
@@ -416,7 +504,7 @@
             });
           });
 
-          // Enable sorting via the btnSortdesc button by age
+          // Enable sorting via the btnSortdesc button
           $$("btnSortdesc").attachEvent("onItemClick", function() {
             userList.sort({
               by:"#age#",
@@ -425,7 +513,10 @@
             });
           });
 
-          // Sync chart data to list data and group chart data by country depending on count of users
+          // Sync list and chart to the “users” collection
+          userList.sync(collectOfUsers);
+
+          // Sync chart data to list data and group chart data by country
           $$("userChart").sync(userList, function(){
             this.group({
               by:"country",
@@ -435,15 +526,27 @@
             });
           });
 
-          // Add a new user with some name, random age and country to the list by clicking on the button "Add user"
-          const countryArray = ["Germany", "Spain", "Belarus", "USA", "China"]
           $$("btnAddUser").attachEvent("onItemClick", function(){
-            userList.add({
-              name:"New User",
-              age:getRandomInt(1, 100),
-              country:`${countryArray[getRandomInt(0, 5)]}`
-            }, 0);
+            userList.add({name:"new user with some name", age:"random age", country:"country"});
+          })
+
+          // Sync the datatable into Admin tab with the collectOfCategories collection
+          $$("categoriesList").sync(collectOfCategories);
+
+          // Enable delete operation for the datatable into Admin tab
+          $$("btnDeleteCategory").attachEvent("onItemClick", function(){
+            let sel = $$("categoriesList").getSelectedId();
+            if(sel) {
+              collectOfCategories.remove(sel)
+            };
           });
+
+          // Enable add operation for the datatable into Admin tab
+          $$("btnAddCategory").attachEvent("onItemClick", function(){
+            collectOfCategories.add({value:"New category"});
+          });
+
+
 
         });
 
