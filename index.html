@@ -280,7 +280,7 @@
                 },
                 onClick:{
                   "wxi-close":function(e, id){
-                    this.remove(id);
+                    collectOfUsers.remove(id);
                     return false;
                   }
                 },
@@ -497,72 +497,72 @@
             });
           });
 
-            // Enable sorting via the btnSortasc button by age
-            $$("btnSortasc").attachEvent("onItemClick", function() {
-              userList.sort({
-                by:"#age#",
-                dir:"asc",
-                as:"int"
-              });
+          // Enable sorting via the btnSortasc button by age
+          $$("btnSortasc").attachEvent("onItemClick", function() {
+            userList.sort({
+              by:"#age#",
+              dir:"asc",
+              as:"int"
             });
+          });
 
-            // Enable sorting via the btnSortdesc button by age
-            $$("btnSortdesc").attachEvent("onItemClick", function() {
-              userList.sort({
-                by:"#age#",
-                dir:"desc",
-                as:"int"
-              });
+          // Enable sorting via the btnSortdesc button by age
+          $$("btnSortdesc").attachEvent("onItemClick", function() {
+            userList.sort({
+              by:"#age#",
+              dir:"desc",
+              as:"int"
             });
+          });
 
-            // Sync list and chart to the “users” collection
-            userList.sync(collectOfUsers);
+          // Sync list and chart to the “users” collection
+          userList.sync(collectOfUsers);
 
-            // Sync chart data to list data and group chart data by country depending on count of users
-            $$("userChart").sync(collectOfUsers, function(){
-              this.group({
-                by:"country",
-                map:{
-                  value:["country","count"]
-                }
-              });
+          // Sync chart data to list data and group chart data by country depending on count of users
+          $$("userChart").sync(collectOfUsers, function(){
+            this.group({
+              by:"country",
+              map:{
+                value:["country","count"]
+              }
             });
+          });
 
-            // Add a new user with some name, random age and country to the list by clicking on the button "Add user"
-            const countryArray = ["Germany", "Spain", "Belarus", "USA", "China"]
-            $$("btnAddUser").attachEvent("onItemClick", function(){
-              userList.add({
-                name:"New User",
-                age:getRandomInt(1, 100),
-                country:`${countryArray[getRandomInt(0, 5)]}`
-              }, 0);
-            });
+          // Add a new user with some name, random age and country to the list by clicking on the button "Add user"
+          const countryArray = ["Germany", "Spain", "Belarus", "USA", "China"]
+          $$("btnAddUser").attachEvent("onItemClick", function(){
+            collectOfUsers.add({
+              name:"New User",
+              age:getRandomInt(1, 100),
+              country:`${countryArray[getRandomInt(0, 5)]}`
+            }, 0);
+          });
 
-            // Sync the datatable into Admin tab with the collectOfCategories collection
-            $$("categoriesList").sync(collectOfCategories);
+          // Sync the datatable into Admin tab with the collectOfCategories collection
+          $$("categoriesList").sync(collectOfCategories);
 
-            // Enable delete operation for the datatable into Admin tab
-            $$("btnDeleteCategory").attachEvent("onItemClick", function(){
-              let sel = $$("categoriesList").getSelectedId();
-              if(sel) {
-                webix.confirm({
-                  title: "Remove this category",
-                  text: "Are you sure you want to remove this category?",
+          // Enable delete operation for the datatable into Admin tab
+          $$("btnDeleteCategory").attachEvent("onItemClick", function(){
+            let sel = $$("categoriesList").getSelectedId();
+            if(sel) {
+              webix.confirm({
+                title: "Remove this category",
+                text: "Are you sure you want to remove this category?",
+              })
+                .then(function(){
+                  collectOfCategories.remove(sel);
+                  webix.message("Category removing is confirmed");
                 })
-                  .then(function(){
-                    collectOfCategories.remove(sel);
-                    webix.message("Category removing is confirmed");
-                  })
-                    .fail(function(){
-                      webix.message("Category removing is rejected");
-                    });
-              };
-            });
+                  .fail(function(){
+                    webix.message("Category removing is rejected");
+                  });
+            };
+          });
 
-            // Enable add operation for the datatable into Admin tab
-            $$("btnAddCategory").attachEvent("onItemClick", function(){
-              collectOfCategories.add({value:"New category"}, 0);
-            });
+          // Enable add operation for the datatable into Admin tab
+          $$("btnAddCategory").attachEvent("onItemClick", function(){
+            collectOfCategories.add({value:"New category"}, 0);
+          });
 
         });
 
