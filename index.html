@@ -472,14 +472,14 @@
               title: "Clear this form",
               text: "Are you sure you want to clear this form?",
             })
-            .then(
-                function(){
-                  editFilms.clear();
-                  editFilms.clearValidation();
-                  filmList.unselectAll();
-                  webix.message("Form cleaning is confirmed");
-                }
-              )
+                .then(
+                    function(){
+                      editFilms.clear();
+                      editFilms.clearValidation();
+                      filmList.unselectAll();
+                      webix.message("Form cleaning is confirmed");
+                    }
+                 )
                 .fail(
                   function(){
                     webix.message("Form cleaning is rejected");
@@ -550,13 +550,13 @@
                 title: "Remove this category",
                 text: "Are you sure you want to remove this category?",
               })
-                .then(function(){
+                .then(function () {
                   collectOfCategories.remove(sel);
                   webix.message("Category removing is confirmed");
                 })
-                  .fail(function(){
-                    webix.message("Category removing is rejected");
-                  });
+                .fail(function () {
+                  webix.message("Category removing is rejected");
+                });
             };
           });
 
