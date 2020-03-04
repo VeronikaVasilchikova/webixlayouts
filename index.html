@@ -20,7 +20,13 @@
             url:"data/categories.js"
           });
           const collectOfUsers = new webix.DataCollection({
-            url:"data/users.js"
+            url:"data/users.js",
+            scheme:{
+              $change:function(item){
+                if (item.age < 26)
+                  item.$css = "highlight";
+              }
+            }
           });
 
           webix.ui({
@@ -272,12 +278,6 @@
                 editor:"text",
                 editValue:"name",
                 editaction:"dblclick",
-                scheme:{
-                  $change:function(item){
-                    if (item.age < 26)
-                      item.$css = "highlight";
-                  }
-                },
                 onClick:{
                   "wxi-close":function(e, id){
                     collectOfUsers.remove(id);
