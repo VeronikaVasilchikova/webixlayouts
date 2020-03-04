@@ -12,6 +12,10 @@
     ></script>
     <script src="data/menudata.js" type="text/javascript"></script>
     <script src="data/testdata.js" type="text/javascript"></script>
+    <script
+      src="customComponents/customButton.js"
+      type="text/javascript"
+    ></script>
     <link rel="stylesheet" href="css/style.css" type="text/css" />
   </head>
   <body>
@@ -279,20 +283,27 @@
             {
               view: "toolbar",
               elements: [
-                { view: "text", id: "filterList" },
                 {
-                  view: "button",
-                  id: "btnSortasc",
-                  value: "Sort asc by age",
-                  css: "webix_primary",
-                  width: 200
+                  view: "text",
+                  id: "filterList"
                 },
                 {
-                  view: "button",
-                  id: "btnSortdesc",
-                  value: "Sort desc by age",
-                  css: "webix_primary",
-                  width: 200
+                  view: "myThreeStateButton",
+                  width: 200,
+                  state: 0,
+                  states: { 0: "Off", 1: "Sort Asc", 2: "Sort Desc" },
+                  on: {
+                    onStateChange: function(state) {
+                      let data = $$("userList");
+                      if (state === 0) {
+                        data.sort("#age#", "desc", "int");
+                      } else if (state === 1) {
+                        data.sort("id", "asc", "int");
+                      } else {
+                        data.sort("#age#", "asc", "int");
+                      }
+                    }
+                  }
                 },
                 {
                   view: "button",
@@ -540,24 +551,6 @@
             let filter = [obj.name, obj.country, obj.age].join("|");
             filter = filter.toLowerCase();
             return filter.indexOf(text) != -1;
-          });
-        });
-
-        // Enable sorting via the btnSortasc button by age
-        $$("btnSortasc").attachEvent("onItemClick", function() {
-          userList.sort({
-            by: "#age#",
-            dir: "asc",
-            as: "int"
-          });
-        });
-
-        // Enable sorting via the btnSortdesc button by age
-        $$("btnSortdesc").attachEvent("onItemClick", function() {
-          userList.sort({
-            by: "#age#",
-            dir: "desc",
-            as: "int"
           });
         });
 
