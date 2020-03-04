@@ -285,16 +285,12 @@
                   }
                 },
                 rules:{
-                  name:function(value){
-                    if(value != "") {
-                      return true;
-                    } else {
-                      webix.message({
-                        text:"You should fill this field with a name",
-                        type:"error"
-                      });
-                      return false;
-                    }
+                  name:webix.rules.isNotEmpty
+                },
+                on:{
+                  onValidationError:function(key, obj){
+                    text = "You should fill this field with a name";
+                    webix.message({type:"error", text:text});
                   }
                 }
               }
@@ -380,17 +376,13 @@
                 editable:true,
                 scrollX:false,
                 select:true,
-                rules:{
-                  value:function(val){
-                    if(val != "") {
-                      return true;
-                    } else {
-                      webix.message({
-                        text:"You should fill this field with a name",
-                        type:"error"
-                      });
-                      return false;
-                    }
+                rules: {
+                  value:webix.rules.isNotEmpty
+                },
+                on:{
+                  onValidationError:function(key, obj){
+                    text = "You should fill this field with a category";
+                    webix.message({type:"error", text:text});
                   }
                 }
               }
