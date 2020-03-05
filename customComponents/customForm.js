@@ -17,18 +17,26 @@ webix.protoUI(
       });
       const btnCancel = {
         view: "button",
-        label: "Cancel"
+        label: "Cancel",
+        click: this.cancelAction
       };
       const btnSave = {
         view: "button",
         label: "Save",
-        css: "webix_primary"
+        css: "webix_primary",
+        click: this.saveAction
       };
       config.elements = [
         ...array,
         { margin: 5, cols: [btnCancel, btnSave] }
       ];
     },
+    saveAction: function () {
+      webix.alert("Default save action");
+    },
+    cancelAction: function () {
+      webix.alert("Default cancel action");
+    }
   },
   webix.ui.form
 );
