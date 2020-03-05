@@ -465,7 +465,9 @@
             { id: "admin", rows: [adminDatatable] },
             {
               id: "reusableForm",
-              rows: [{ view: "myReusableForm", id:"my", fields: ["one", "two"] }]
+              rows: [
+                { view: "myReusableForm", id: "my", fields: ["one", "two"] }
+              ]
             }
           ],
           fitBiggest: true
@@ -615,7 +617,6 @@
         $$("btnAddCategory").attachEvent("onItemClick", function() {
           collectOfCategories.add({ value: "New category" }, 0);
         });
-        console.log($$("my").config);
       });
     </script>
   </body>
