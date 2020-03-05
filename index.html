@@ -466,7 +466,14 @@
             {
               id: "reusableForm",
               rows: [
-                { view: "myReusableForm", id: "my", fields: ["one", "two"] }
+                { 
+                  view: "myReusableForm", 
+                  id: "my", 
+                  fields: ["one", "two"],
+                  saveAction: function() {
+                    webix.alert("save clicked");
+                  } 
+                }
               ]
             }
           ],
