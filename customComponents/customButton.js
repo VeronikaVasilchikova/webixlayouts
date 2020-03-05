@@ -1,6 +1,7 @@
 webix.protoUI(
   {
     name: "myThreeStateButton",
+    $cssName: "treeStateButton",
     $init: function(config) {
       let state = config.state || 0;
       config.label = config.states[state];
@@ -17,7 +18,7 @@ webix.protoUI(
         this.config.label = this.config.states[state];
         this.refresh();
         webix.html.addCss(this.$view, "webix_state_" + state);
-        this.callEvent("onStateChange", [ state ]);
+        this.callEvent("onStateChange", [state]);
       });
     }
   },

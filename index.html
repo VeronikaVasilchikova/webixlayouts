@@ -16,6 +16,10 @@
       src="customComponents/customButton.js"
       type="text/javascript"
     ></script>
+    <script
+      src="customComponents/customForm.js"
+      type="text/javascript"
+    ></script>
     <link rel="stylesheet" href="css/style.css" type="text/css" />
   </head>
   <body>
@@ -458,8 +462,13 @@
             { id: "dashboard", cols: [datatable, form] },
             { id: "users", rows: [userComponent, userChart] },
             { id: "products", rows: [treeTable] },
-            { id: "admin", rows: [adminDatatable] }
-          ]
+            { id: "admin", rows: [adminDatatable] },
+            {
+              id: "reusableForm",
+              rows: [{ view: "myReusableForm", id:"my", fields: ["one", "two"] }]
+            }
+          ],
+          fitBiggest: true
         };
 
         webix.ui({
@@ -606,6 +615,7 @@
         $$("btnAddCategory").attachEvent("onItemClick", function() {
           collectOfCategories.add({ value: "New category" }, 0);
         });
+        console.log($$("my").config);
       });
     </script>
   </body>
