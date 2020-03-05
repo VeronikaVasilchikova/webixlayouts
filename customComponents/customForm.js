@@ -5,22 +5,16 @@ webix.protoUI(
       scroll: false,
       autoheight: true
     },
-    $init: function(config) {
-      const fieldFName = {
-        view: "text",
-        label: "First name",
-        name: "fname"
-      };
-      const fieldLName = {
-        view: "text",
-        label: "Second name",
-        name: "sname"
-      };
-      const fieldAddress = {
-        view: "text",
-        label: "Address",
-        name: "address"
-      };
+    $init: function (config) {
+      const fields = config.fields;
+      const array = fields.map((item, index) => {
+        return {
+          id: `${index}`,
+          view: "text",
+          label: `${item[0].toUpperCase()}${item.slice(1)}`,
+          name: `${item}`
+        }
+      });
       const btnCancel = {
         view: "button",
         label: "Cancel"
@@ -31,14 +25,10 @@ webix.protoUI(
         css: "webix_primary"
       };
       config.elements = [
-        fieldFName,
-        fieldLName,
-        fieldAddress,
+        ...array,
         { margin: 5, cols: [btnCancel, btnSave] }
       ];
     },
-    saveAction: function() {},
-    cancelAction: function() {}
   },
   webix.ui.form
 );
