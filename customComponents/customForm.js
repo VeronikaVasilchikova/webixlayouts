@@ -7,9 +7,8 @@ webix.protoUI(
     },
     $init: function (config) {
       const fields = config.fields;
-      const array = fields.map((item, index) => {
+      const array = fields.map(item => {
         return {
-          id: `${index}`,
           view: "text",
           label: `${item[0].toUpperCase()}${item.slice(1)}`,
           name: `${item}`
