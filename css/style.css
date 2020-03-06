@@ -29,3 +29,18 @@
 .highlight {
   background-color: yellow;
 }
+
+.webix_el_treeStateButton.webix_state_0 button {
+  background-color: #80f7c5;
+  color: #062def;
+}
+
+.webix_el_treeStateButton.webix_state_1 button {
+  background-color: #f789ad;
+  color:#fff;
+}
+
+.webix_el_treeStateButton.webix_state_2 button {
+  background-color: #f4f75d;
+  color: #565740;
+}
